@@ -4,8 +4,8 @@ from telegram.ext import CommandHandler
 def _login_cmd(bot, update, args, user_data):
     if len(args) != 2:
         bot.send_message(chat_id=update.message.chat_id,
-                         text='Hierfür benötige ich deine sNummer und dein Passwort. ' +
-                              'Benutze bitte die Syntax `/login s12345 dein_passwort`.')
+                         text='Hierfür benötige ich deine sNummer und dein Passwort. Benutze bitte die Syntax '
+                              '`/login s12345 dein_passwort`.')
         return
     user_data['rzlogin'] = args
     bot.send_message(chat_id=update.message.chat_id,
