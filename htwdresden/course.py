@@ -27,9 +27,9 @@ class Course:
     @staticmethod
     def fetch(login: RZLogin):
         req = requests.get('https://wwwqis.htw-dresden.de/appservice/v2/getcourses',
-                           auth=requests.auth.HTTPBasicAuth(login.sNumber, login.password))
+                           auth=requests.auth.HTTPBasicAuth(login.s_number, login.password))
         if req.status_code is not 200:
-            # todo: raise exception
+            # TODO: raise exception
             print(req.text)
             return None
         courses = json.loads(req.text)

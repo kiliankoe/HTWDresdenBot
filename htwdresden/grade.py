@@ -54,9 +54,9 @@ class Grade:
     @staticmethod
     def fetch(login: RZLogin, degree_nr: str, course_nr: str, reg_version: int):
         req = requests.get(f'https://wwwqis.htw-dresden.de/appservice/v2/getgrades?AbschlNr={degree_nr}&StgNr={course_nr}&POVersion={reg_version}',
-                           auth=requests.auth.HTTPBasicAuth(login.sNumber, login.password))
+                           auth=requests.auth.HTTPBasicAuth(login.s_number, login.password))
         if req.status_code is not 200:
-            # todo: raise exception
+            # TODO: raise exception
             print(req.text)
             return None
         grades = json.loads(req.text)
