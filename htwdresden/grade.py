@@ -3,6 +3,7 @@ import json
 
 from .login import RZLogin
 
+
 class Grade:
     def __init__(self,
                  exam_nr,
@@ -61,3 +62,6 @@ class Grade:
             return None
         grades = json.loads(req.text)
         return [Grade.from_json(grade) for grade in grades]
+
+    def __repr__(self):
+        return f'{self.exam_date} {self.title} {self.grade}'

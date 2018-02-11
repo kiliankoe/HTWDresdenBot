@@ -3,6 +3,7 @@ import json
 
 from .login import RZLogin
 
+
 class Course:
     def __init__(self,
                  reg_version: int,
