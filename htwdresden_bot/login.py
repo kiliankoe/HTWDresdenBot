@@ -21,7 +21,7 @@ def _login_cmd(bot, update, args):
                          text='Dieser Login scheint nicht zu funktionieren. Sicher, dass die Daten so korrekt sind?')
         return
 
-    ok = db.persist_login(update.message.chat.username, login)
+    ok = db.persist_login(update.message.chat_id, login)
     if ok:
         bot.send_message(chat_id=update.message.chat_id,
                          text='Dein Login wurde gespeichert ✔')

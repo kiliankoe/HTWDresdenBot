@@ -9,7 +9,7 @@ def _grades_cmd(bot, update, args):
     if len(args) is 2:
         login = RZLogin(args[0], args[1])
     else:
-        login = db.fetch_login_for_user(update.message.chat.username)
+        login = db.fetch_login_for_user(update.message.chat_id)
 
     if login is None:
         bot.send_message(chat_id=update.message.chat_id,
