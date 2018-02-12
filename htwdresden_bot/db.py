@@ -47,3 +47,11 @@ def fetch_login_for_user(user_id: str) -> RZLogin or None:
             return RZLogin(res[1], res[2])
         else:
             return None
+
+
+def fetch_all_logins() -> [(str, RZLogin)]:
+    with sqlite3.connect(DB_NAME) as conn:
+        c = conn.cursor()
+        c.execute('''SELECT * from `logins`;''')
+        res = c.fetchall()
+        return [(r[0], RZLogin(r[1], r[2])) for r in res]
