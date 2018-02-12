@@ -18,11 +18,11 @@ def setup():
             print(f'{DB_NAME} with table `logins` already exists.')
 
 
-def persist_login(user_id: str, login: str, password: str) -> bool:
+def persist_login(user_id: str, login: RZLogin) -> bool:
     with sqlite3.connect(DB_NAME) as conn:
         c = conn.cursor()
         try:
-            c.execute('''INSERT into `logins` values (?,?,?);''', (user_id, login, password))
+            c.execute('''INSERT into `logins` values (?,?,?);''', (user_id, login.s_number, login.password))
             conn.commit()
         except sqlite3.IntegrityError as e:
             print(f'Error on persisting login for `{user_id}` `{login}`: {e}', file=sys.stderr)

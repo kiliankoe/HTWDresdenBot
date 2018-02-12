@@ -1,4 +1,6 @@
+import sys
 from telegram.ext import CommandHandler
+from htwdresden import RZLogin, Course, HTWAuthenticationException
 from htwdresden_bot import db
 
 
@@ -8,7 +10,18 @@ def _login_cmd(bot, update, args):
                          text='Hierfür benötige ich deine sNummer und dein Passwort. Benutze bitte die Syntax '
                               '`/login s12345 dein_passwort`.')
         return
-    ok = db.persist_login(update.message.chat.username, args[0], args[1])
+
+    login = RZLogin(args[0], args[1])
+
+    try:
+        Course.fetch(login)
+    except HTWAuthenticationException:
+        print(f'Failed login attempt for {login}.', file=sys.stderr)
+        bot.send_message(chat_id=update.message.chat_id,
+                         text='Dieser Login scheint nicht zu funktionieren. Sicher, dass die Daten so korrekt sind?')
+        return
+
+    ok = db.persist_login(update.message.chat.username, login)
     if ok:
         bot.send_message(chat_id=update.message.chat_id,
                          text='Dein Login wurde gespeichert ✔')
