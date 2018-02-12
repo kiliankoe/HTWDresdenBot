@@ -37,4 +37,4 @@ class Course:
         return [Course.from_json(course) for course in courses]
 
     def __repr__(self):
-        return f'{self.degree_txt} {self.course_txt} {self.reg_version}'
+        return '{} {} {}'.format(self.degree_txt, self.course_txt, self.reg_version)
