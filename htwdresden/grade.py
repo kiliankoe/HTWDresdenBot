@@ -66,10 +66,13 @@ class Grade:
     def __repr__(self):
         grade = int(self.grade) / 100 if self.grade is not None else 'n/a'
         if self.state == 'BE':
+            # passed
             state = '✔︎'
         elif self.state == 'NB':
+            # not passed
             state = '✘'
         elif self.state == 'AN':
+            # 'angemeldet', usually only the case if explicitly opted out of the exam, e.g. 'geschoben'
             state = '↻'
         else:
             state = ' '
