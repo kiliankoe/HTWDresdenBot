@@ -11,5 +11,6 @@ dispatcher.add_handler(start_handler)
 dispatcher.add_handler(login_handler)
 dispatcher.add_handler(logout_handler)
 dispatcher.add_handler(grades_handler)
+dispatcher.add_handler(free_rooms_handler)
 
 updater.start_polling()
