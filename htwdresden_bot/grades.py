@@ -39,7 +39,9 @@ grades_handler = CommandHandler('noten', _grades_cmd, pass_args=True)
 def _fetch_grades(login: RZLogin) -> str:
     try:
         course = Course.fetch(login)[0]  # can this contain multiple courses?
-        grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)#.sort(key=lambda grade: grade.exam_date)
+        grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)
+        grades = sorted(grades,
+                        key=lambda grade: grade.exam_date if grade.exam_date is not None else '0000')
     except HTWAuthenticationException:
         print(f'Failed auth on fetching grades for {login}', file=sys.stderr)
         return None
