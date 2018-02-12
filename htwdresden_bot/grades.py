@@ -32,7 +32,7 @@ def _grades_cmd(_, update, args):
 grades_handler = CommandHandler('noten', _grades_cmd, pass_args=True)
 
 
-def _fetch_grades(login: RZLogin) -> str:
+def _fetch_grades(login: RZLogin) -> str or None:
     try:
         course = Course.fetch(login)[0]  # can this contain multiple courses?
         grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)
