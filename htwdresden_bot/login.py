@@ -1,13 +1,15 @@
 import sys
 from telegram.ext import CommandHandler
+from telegram.parsemode import ParseMode
 from htwdresden import RZLogin, Course, HTWAuthenticationException
 from htwdresden_bot import db
 
 
 def _login_cmd(_, update, args):
     if len(args) != 2:
-        update.message.reply_text('Hierfür benötige ich deine sNummer und dein Passwort. Benutze bitte die Syntax `/login '
-                             's12345 dein_passwort`.')
+        update.message.reply_text('Hierfür benötige ich deine sNummer und dein Passwort. Benutze bitte die Syntax\n'
+                                  '`/login s12345 dein_passwort`',
+                                  parse_mode=ParseMode.MARKDOWN)
         return
 
     login = RZLogin(args[0], args[1])
