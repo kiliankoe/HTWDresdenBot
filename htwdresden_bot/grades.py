@@ -25,7 +25,8 @@ def _grades_cmd(_, update, args):
         update.message.reply_text('Fehler beim Abrufen deiner Noten. 👀\n\nEin /logout und anschließender /login hilft '
                                   'bestimmt. 🤞')
     else:
-        update.message.reply_text('```\n{}\n```'.format(grades_msg),
+        update.message.reply_text('```\n{}\n```\n\nEine genaue Auflistung findest du [hier]'
+                                  '(https://wwwqis.htw-dresden.de).'.format(grades_msg),
                                   parse_mode=ParseMode.MARKDOWN)
 
 
