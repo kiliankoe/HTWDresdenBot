@@ -1,7 +1,8 @@
 import os
 from telegram.ext import Updater
-
 from htwdresden_bot import *
+
+db.setup()
 
 updater = Updater(token=os.getenv('TELEGRAM_BOT_TOKEN'))
 dispatcher = updater.dispatcher
