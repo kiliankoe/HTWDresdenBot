@@ -1,8 +1,8 @@
-import requests
-import json
+from requests.auth import HTTPBasicAuth
 
 from .login import RZLogin
-from .exceptions import HTWAuthenticationException
+from .network import Network
+
 
 class Course:
     def __init__(self,
@@ -27,15 +27,8 @@ class Course:
 
     @staticmethod
     def fetch(login: RZLogin):
-        req = requests.get('https://wwwqis.htw-dresden.de/appservice/v2/getcourses',
-                           auth=requests.auth.HTTPBasicAuth(login.s_number, login.password))
-        if req.status_code == 401:
-            raise HTWAuthenticationException()
-        elif req.status_code is not 200:
-            print(req.status_code)
-            print(req.text)
-            return None
-        courses = json.loads(req.text)
+        courses = Network.get('https://wwwqis.htw-dresden.de/appservice/v2/getcourses',
+                              auth=HTTPBasicAuth(login.s_number, login.password))
         return [Course.from_json(course) for course in courses]
 
     def __repr__(self):

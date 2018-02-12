@@ -1,8 +1,7 @@
-import requests
-import json
+from requests.auth import HTTPBasicAuth
 
 from .login import RZLogin
-from .exceptions import HTWAuthenticationException
+from .network import Network
 
 
 class Grade:
@@ -55,15 +54,9 @@ class Grade:
 
     @staticmethod
     def fetch(login: RZLogin, degree_nr: str, course_nr: str, reg_version: int):
-        req = requests.get(f'https://wwwqis.htw-dresden.de/appservice/v2/getgrades?AbschlNr={degree_nr}&StgNr={course_nr}&POVersion={reg_version}',
-                           auth=requests.auth.HTTPBasicAuth(login.s_number, login.password))
-        if req.status_code is 401:
-            raise HTWAuthenticationException()
-        if req.status_code is not 200:
-            print(req.status_code)
-            print(req.text)
-            return None
-        grades = json.loads(req.text)
+        grades = Network.get('https://wwwqis.htw-dresden.de/appservice/v2/getgrades',
+                             params={'AbschlNr': degree_nr, 'StgNr': course_nr, 'POVersion': reg_version},
+                             auth=HTTPBasicAuth(login.s_number, login.password))
         return [Grade.from_json(grade) for grade in grades]
 
     def __repr__(self):
