@@ -14,28 +14,22 @@ def _login_cmd(bot, update, args):
                          text='Dein Login wurde gespeichert ✔')
     else:
         bot.send_message(chat_id=update.message.chat_id,
-                         text='Dein Login konnte leider nicht gespeichert werden. Kenne ich ihn vielleicht schon?')
+                         text='Dein Login konnte leider nicht gespeichert werden. Kenne ich ihn vielleicht schon?\n\n'
+                              'Wenn du dein Passwort ändern willst, dann sende bitte /logout um den alten Login zu '
+                              'löschen. Sorry für die Umständlichkeiten.')
 
 
 login_handler = CommandHandler('login', _login_cmd, pass_args=True)
-
-
-# def _change_password_cmd(bot, update, args):
-#     raise NotImplementedError  # TODO
-#     pass
-#
-#
-# change_password_handler = CommandHandler('pw_aendern', _change_password_cmd, pass_args=True)
 
 
 def _logout_cmd(bot, update):
     ok = db.remove_login(update.message.chat.username)
     if ok:
         bot.send_message(chat_id=update.message.chat_id,
-                         text='Deine gespeicherten Login Daten wurden erfolgreich gelöscht ✔')
+                         text='Deine gespeicherter Login wurde erfolgreich gelöscht ✔')
     else:
         bot.send_message(chat_id=update.message.chat_id,
-                         text='Dein Login konnte nicht gelöscht wurden. Kannte ich ihn überhaupt? 🤔')
+                         text='Dein Login konnte nicht gelöscht werden. Kannte ich ihn überhaupt? 🤔')
 
 
 logout_handler = CommandHandler('logout', _logout_cmd)
