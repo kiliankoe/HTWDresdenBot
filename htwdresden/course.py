@@ -2,7 +2,7 @@ import requests
 import json
 
 from .login import RZLogin
-
+from .exceptions import HTWAuthenticationException
 
 class Course:
     def __init__(self,
@@ -29,8 +29,10 @@ class Course:
     def fetch(login: RZLogin):
         req = requests.get('https://wwwqis.htw-dresden.de/appservice/v2/getcourses',
                            auth=requests.auth.HTTPBasicAuth(login.s_number, login.password))
-        if req.status_code is not 200:
-            # TODO: raise exception
+        if req.status_code == 401:
+            raise HTWAuthenticationException()
+        elif req.status_code is not 200:
+            print(req.status_code)
             print(req.text)
             return None
         courses = json.loads(req.text)

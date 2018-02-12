@@ -1,0 +1,2 @@
+class HTWAuthenticationException(Exception):
+    pass
