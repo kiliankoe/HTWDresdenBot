@@ -41,9 +41,4 @@ def _fetch_grades(login: RZLogin) -> str:
     except HTWAuthenticationException:
         print(f'Failed auth on fetching grades for {login}', file=sys.stderr)
         return None
-    return _format_grades(grades)
-
-
-def _format_grades(grades: [Grade]) -> str:
-    formatted_grades = [str(g) for g in grades]
-    return '\n'.join(formatted_grades)
+    return '\n'.join([str(g) for g in grades])
