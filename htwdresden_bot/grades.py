@@ -1,22 +1,29 @@
 from telegram.ext import CommandHandler
+from telegram.parsemode import ParseMode
 from htwdresden import RZLogin, Course, Grade
+from htwdresden_bot import db
 
 
-def _grades_cmd(bot, update, user_data):
-    if 'rzlogin' not in user_data:
+def _grades_cmd(bot, update, args):
+    if len(args) is 2:
+        login = RZLogin(args[0], args[1])
+    else:
+        login = db.fetch_login_for_user(update.message.chat.username)
+
+    if login is None:
         bot.send_message(chat_id=update.message.chat_id,
-                         text='Um deine Noten abzurufen benötige ich deinen RZLogin (sNummer und Passwort). '
-                              'Dieser wird selbstverständlich nur kurzlebig gespeichert.\nUm den Login zu speichern '
-                              'nutze bitte den `/login` Befehl.\n\nSolltest du deinen Login bereits einmal eingegeben '
-                              'haben dann wurde ich wohl zwischenzeitlich neu gestartet und habe ihn vergessen. '
-                              'Sorry 😅')
+                         text='Um deine Noten abzurufen benötige ich deinen RZLogin (sNummer und Passwort).\n'
+                              'Um den Login zu speichern nutze bitte den `/login` Befehl.\n\nAlternativ kannst du '
+                              'auch deine sNummer und dein Passwort an diesen Befehl anhängen, dann wird dein Login '
+                              'nicht persistiert und nur dieses eine Mal genutzt um deine Noten abzurufen.')
         return
-    login = RZLogin(user_data.get('rzlogin')[0], user_data.get('rzlogin')[1])
     grades_msg = _fetch_grades(login)
-    bot.send_message(chat_id=update.message.chat_id, text='```\n{}\n```'.format(grades_msg), parse_mode='markdown')
+    bot.send_message(chat_id=update.message.chat_id,
+                     text='```\n{}\n```'.format(grades_msg),
+                     parse_mode=ParseMode.MARKDOWN)
 
 
-grades_handler = CommandHandler('noten', _grades_cmd, pass_user_data=True)
+grades_handler = CommandHandler('noten', _grades_cmd, pass_args=True)
 
 
 def _fetch_grades(login: RZLogin) -> str:
