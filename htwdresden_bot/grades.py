@@ -1,11 +1,12 @@
 import sys
 from telegram.ext import CommandHandler
 from telegram.parsemode import ParseMode
+from telegram.chataction import ChatAction
 from htwdresden import RZLogin, Course, Grade, HTWAuthenticationException
 from htwdresden_bot import db
 
 
-def _grades_cmd(_, update, args):
+def _grades_cmd(bot, update, args):
     if len(args) is 2:
         login = RZLogin(args[0], args[1])
     else:
@@ -17,6 +18,9 @@ def _grades_cmd(_, update, args):
                                   'deine sNummer und dein Passwort an diesen Befehl anhängen, dann wird dein Login '
                                   'nicht persistiert und nur dieses eine Mal genutzt um deine Noten abzurufen.')
         return
+
+    bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+
     grades_msg = _fetch_grades(login)
 
     if grades_msg == '':
