@@ -13,7 +13,7 @@ def _grades_cmd(bot, update, user_data):
         return
     login = RZLogin(user_data.get('rzlogin')[0], user_data.get('rzlogin')[1])
     grades_msg = _fetch_grades(login)
-    bot.send_message(chat_id=update.message.chat_id, text=grades_msg)
+    bot.send_message(chat_id=update.message.chat_id, text='```\n{}\n```'.format(grades_msg), parse_mode='markdown')
 
 
 grades_handler = CommandHandler('noten', _grades_cmd, pass_user_data=True)
@@ -26,12 +26,5 @@ def _fetch_grades(login: RZLogin) -> str:
 
 
 def _format_grades(grades: [Grade]) -> str:
-    formatted_grades = []
-    for g in grades:
-        date = g.exam_date if g.exam_date is not None else 'n/a'
-        title = g.title
-        grade = int(g.grade) / 100 if g.grade is not None else 'n/a'
-
-        formatted_grades.append('{} {} {}'.format(date, title, grade))
-
+    formatted_grades = [str(g) for g in grades]
     return '\n'.join(formatted_grades)

@@ -64,4 +64,13 @@ class Grade:
         return [Grade.from_json(grade) for grade in grades]
 
     def __repr__(self):
-        return f'{self.exam_date} {self.title} {self.grade}'
+        grade = int(self.grade) / 100 if self.grade is not None else 'n/a'
+        if self.state == 'BE':
+            state = '✔︎'
+        elif self.state == 'NB':
+            state = '✘'
+        elif self.state == 'AN':
+            state = '↻'
+        else:
+            state = ' '
+        return '{} {}: {}'.format(state, self.title, grade)
