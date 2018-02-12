@@ -13,9 +13,9 @@ def _grades_cmd(_, update, args):
 
     if login is None:
         update.message.reply_text('Um deine Noten abzurufen benötige ich deinen RZLogin (sNummer und Passwort).\nUm '
-                                  'den Login zu speichern nutze bitte den `/login` Befehl.\n\nAlternativ kannst du '
-                                  'auch deine sNummer und dein Passwort an diesen Befehl anhängen, dann wird dein '
-                                  'Login nicht persistiert und nur dieses eine Mal genutzt um deine Noten abzurufen.')
+                                  'den Login zu speichern nutze bitte den /login Befehl.\n\nAlternativ kannst du auch '
+                                  'deine sNummer und dein Passwort an diesen Befehl anhängen, dann wird dein Login '
+                                  'nicht persistiert und nur dieses eine Mal genutzt um deine Noten abzurufen.')
         return
     grades_msg = _fetch_grades(login)
 
