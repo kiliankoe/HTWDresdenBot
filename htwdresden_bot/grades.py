@@ -1,6 +1,7 @@
+import sys
 from telegram.ext import CommandHandler
 from telegram.parsemode import ParseMode
-from htwdresden import RZLogin, Course, Grade
+from htwdresden import RZLogin, Course, Grade, HTWAuthenticationException
 from htwdresden_bot import db
 
 
@@ -18,17 +19,30 @@ def _grades_cmd(bot, update, args):
                               'nicht persistiert und nur dieses eine Mal genutzt um deine Noten abzurufen.')
         return
     grades_msg = _fetch_grades(login)
-    bot.send_message(chat_id=update.message.chat_id,
-                     text='```\n{}\n```'.format(grades_msg),
-                     parse_mode=ParseMode.MARKDOWN)
+
+    if grades_msg == '':
+        bot.send_message(chat_id=update.message.chat_id,
+                         text='Konnte keine Noten finden. 🤔')
+    elif grades_msg is None:
+        bot.send_message(chat_id=update.message.chat_id,
+                         text='Fehler beim Abrufen deiner Noten. 👀\n\nEin /logout und anschließender /login hilft '
+                              'bestimmt. 🤞')
+    else:
+        bot.send_message(chat_id=update.message.chat_id,
+                         text='```\n{}\n```'.format(grades_msg),
+                         parse_mode=ParseMode.MARKDOWN)
 
 
 grades_handler = CommandHandler('noten', _grades_cmd, pass_args=True)
 
 
 def _fetch_grades(login: RZLogin) -> str:
-    course = Course.fetch(login)[0]  # can this contain multiple courses?
-    grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)#.sort(key=lambda grade: grade.exam_date)
+    try:
+        course = Course.fetch(login)[0]  # can this contain multiple courses?
+        grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)#.sort(key=lambda grade: grade.exam_date)
+    except HTWAuthenticationException:
+        print(f'Failed auth on fetching grades for {login}', file=sys.stderr)
+        return None
     return _format_grades(grades)
 
 
