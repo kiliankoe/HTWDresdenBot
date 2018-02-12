@@ -33,7 +33,7 @@ login_handler = CommandHandler('login', _login_cmd, pass_args=True)
 
 
 def _logout_cmd(_, update):
-    ok = db.remove_login(update.message.chat.username)
+    ok = db.remove_login(update.message.chat_id)
     if ok:
         update.message.reply_text('Dein gespeicherter Login wurde erfolgreich gelöscht ✔')
     else:
