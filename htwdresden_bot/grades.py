@@ -60,4 +60,3 @@ def _fetch_grades(login: RZLogin) -> [Grade]:
         print(f'Failed fetching grades for {login} with {e}', file=sys.stderr)
         return []
     return grades
-    # return '\n'.join([str(g) for g in grades])
