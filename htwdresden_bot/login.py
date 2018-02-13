@@ -21,6 +21,8 @@ def _login_cmd(_, update, args):
         update.message.reply_text('Dieser Login scheint nicht zu funktionieren. Sicher, dass die Daten so korrekt '
                                   'sind?')
         return
+    except:
+        pass
 
     ok = db.persist_login(update.message.chat_id, login)
     if ok:
