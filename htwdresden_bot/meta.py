@@ -1,5 +1,3 @@
-import subprocess
-
 from telegram.ext import CommandHandler
 from telegram.parsemode import ParseMode
 
@@ -13,13 +11,3 @@ def _start_cmd(_, update):
 
 
 start_handler = CommandHandler('start', _start_cmd)
-
-
-def _version_cmd(_, update):
-    label = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'])\
-        .strip()\
-        .decode('utf-8')
-    update.message.reply_text(label)
-
-
-version_handler = CommandHandler('version', _version_cmd)
