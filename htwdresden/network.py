@@ -11,6 +11,8 @@ class Network:
             raise HTWAuthenticationException
         elif req.status_code == 400:
             raise HTWRequestError
+        elif int(req.status_code / 100) == 5:
+            raise HTWServerError
         elif req.status_code != 200:
             print(req.status_code)
             print(req.text)

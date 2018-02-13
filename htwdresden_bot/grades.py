@@ -2,7 +2,7 @@ import sys
 from telegram.ext import CommandHandler
 from telegram.parsemode import ParseMode
 from telegram.chataction import ChatAction
-from htwdresden import RZLogin, Course, Grade, HTWAuthenticationException
+from htwdresden import RZLogin, Course, Grade
 from htwdresden_bot import db
 
 
@@ -37,7 +37,7 @@ def _grades_cmd(bot, update, args):
         update.message.reply_text('Konnte keine Noten finden. 🤔')
     elif grades_msg is None:
         update.message.reply_text('Fehler beim Abrufen deiner Noten. 👀\n\nEin /logout und anschließender /login hilft '
-                                  'bestimmt. 🤞')
+                                  'bestimmt. 🤞\nFalls nicht musst du wohl leider abwarten, sry 😢')
     else:
         update.message.reply_text('```\n{}\n```\n\nAlle Angaben ohne Gewähr. Eine detaillierte Auflistung findest du '
                                   '[hier](https://wwwqis.htw-dresden.de).'.format(grades_msg),
@@ -52,7 +52,7 @@ def _fetch_grades(login: RZLogin) -> str or None:
         course = Course.fetch(login)[0]  # can this contain multiple courses?
         grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)
         grades = sorted(grades, key=lambda grade: grade.exam_date if grade.exam_date is not None else '0000')
-    except HTWAuthenticationException:
-        print(f'Failed auth on fetching grades for {login}', file=sys.stderr)
+    except:
+        print(f'Failed fetching grades for {login}', file=sys.stderr)
         return None
     return '\n'.join([str(g) for g in grades])
