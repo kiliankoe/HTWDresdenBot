@@ -7,7 +7,17 @@ from htwdresden_bot import db
 
 
 def _grades_cmd(bot, update, args):
-    if len(args) is 2:
+
+    if len(args) == 1 and args[0].lower() == 'hilfe':
+        update.message.reply_text('Mit /noten kannst du deine Noten abrufen. Hierfür ist natürlich dein RZLogin '
+                                  'erforderlich. Den kannst du mir entweder via /login permanent (zumindest bis du '
+                                  'dich via /logout wieder bei mir abmeldest) überlassen oder mit '
+                                  '\'/noten s12345 dein_password\' nur einmal übergeben, wobei dieser dann nicht '
+                                  'gespeichert wird. Solltest du deinen Login hinterlegen kannst du deine Noten in '
+                                  'Zukunft direkt via /noten abrufen.')
+        return
+
+    if len(args) == 2:
         login = RZLogin(args[0], args[1])
     else:
         login = db.fetch_login_for_user(update.message.chat_id)

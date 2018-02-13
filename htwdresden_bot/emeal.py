@@ -15,6 +15,15 @@ DEFAULT_DATE = datetime.now()
 def _meals_cmd(bot, update, args):
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
 
+    if len(args) == 1 and args[0].lower() == 'hilfe':
+        update.message.reply_text(f'Mit /mensa erfährst du, was es aktuell in den Mensen des Studentenwerks Dresden '
+                                  f'zu essen gibt. Hier ein paar Nutzungsbeispiele:\n\n'
+                                  f'/mensa - Was gibt\'s heute in der {DEFAULT_CANTEEN_NAME}\n'
+                                  f'/mensa morgen - Was gibt\'s morgen in der {DEFAULT_CANTEEN_NAME}\n'
+                                  f'/mensa Alte Mensa - Was gibt\'s heute in der Alten Mensa\n'
+                                  f'/mensa siedepunkt übermorgen - Was gibt\'s übermorgen in der Mensa Siedepunkt')
+        return
+
     if len(args) == 0:
         # /mensa
         canteen_name = None
