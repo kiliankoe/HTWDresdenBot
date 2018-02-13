@@ -161,7 +161,5 @@ meal_search_handler = CommandHandler('mensasuche', _meal_search_cmd, pass_args=T
 
 def _format_search_results(meal: Meal) -> str:
     date = datetime.strptime(meal.date, '%Y-%m-%d').strftime('%d.%m.%Y')
-    title = meal.title
-    canteen = meal.canteen
 
-    return "{} @ {}: {}".format(date, canteen, title)
+    return "{} @ {}: [{}]({})".format(date, meal.canteen, meal.title, meal.detail_url)
