@@ -37,7 +37,10 @@ def _grades_cmd(bot, update, args):
         update.message.reply_text('Konnte keine Noten finden. 🤔')
     elif grades_msg is None:
         update.message.reply_text('Fehler beim Abrufen deiner Noten. 👀\n\nEin /logout und anschließender /login hilft '
-                                  'bestimmt. 🤞\nFalls nicht musst du wohl leider abwarten, sry 😢')
+                                  'bestimmt. 🤞\nAlternativ kannst du auch direkt beim '
+                                  '[QIS Portal](https://wwwqis.htw-dresden.de) vorbeischauen, hoffentlich klappt ja '
+                                  'zumindest das. 😅',
+                                  parse_mode=ParseMode.MARKDOWN)
     else:
         update.message.reply_text('```\n{}\n```\n\nAlle Angaben ohne Gewähr. Eine detaillierte Auflistung findest du '
                                   '[hier](https://wwwqis.htw-dresden.de).'.format(grades_msg),
