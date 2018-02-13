@@ -31,7 +31,8 @@ def _grades_cmd(bot, update, args):
 
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
 
-    grades_msg = _fetch_grades(login)
+    grades = _fetch_grades(login)
+    grades_msg = '\n'.join([str(g) for g in grades])
 
     if grades_msg == '':
         update.message.reply_text('Konnte keine Noten finden. 🤔')
@@ -50,12 +51,13 @@ def _grades_cmd(bot, update, args):
 grades_handler = CommandHandler('noten', _grades_cmd, pass_args=True)
 
 
-def _fetch_grades(login: RZLogin) -> str or None:
+def _fetch_grades(login: RZLogin) -> [Grade]:
     try:
         course = Course.fetch(login)[0]  # can this contain multiple courses?
         grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)
         grades = sorted(grades, key=lambda grade: grade.exam_date if grade.exam_date is not None else '0000')
-    except:
-        print(f'Failed fetching grades for {login}', file=sys.stderr)
-        return None
-    return '\n'.join([str(g) for g in grades])
+    except Exception as e:
+        print(f'Failed fetching grades for {login} with {e}', file=sys.stderr)
+        return []
+    return grades
+    # return '\n'.join([str(g) for g in grades])
