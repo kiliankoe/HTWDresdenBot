@@ -17,7 +17,6 @@ def _login_cmd(_, update, args):
     try:
         Course.fetch(login)
     except HTWAuthenticationException:
-        print(f'Failed login attempt from {update.message.chat.username} with {login}.', file=sys.stderr)
         update.message.reply_text('Dieser Login scheint nicht zu funktionieren. Sicher, dass die Daten so korrekt '
                                   'sind?')
         return
