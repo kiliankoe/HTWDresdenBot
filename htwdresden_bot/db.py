@@ -15,7 +15,11 @@ def setup():
                 `password`	TEXT NOT NULL
             );''')
         except sqlite3.OperationalError:
-            print(f'{DB_NAME} with table `logins` already exists.')
+            # db with table logins already exists
+            pass
+        except Exception as e:
+            print(e)
+            sys.exit(1)
 
 
 def persist_login(chat_id: str, login: RZLogin) -> bool:
@@ -25,7 +29,6 @@ def persist_login(chat_id: str, login: RZLogin) -> bool:
             c.execute('''INSERT into `logins` values (?,?,?);''', (chat_id, login.s_number, login.password))
             conn.commit()
         except sqlite3.IntegrityError as e:
-            print(f'Error on persisting login for `{chat_id}` `{login}`: {e}', file=sys.stderr)
             return False
         return True
 
