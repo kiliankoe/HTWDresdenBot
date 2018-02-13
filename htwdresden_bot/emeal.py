@@ -98,9 +98,9 @@ meals_handler = CommandHandler('mensa', _meals_cmd, pass_args=True)
 
 def _format_meal(meal: Meal) -> str:
     if meal.student_price is not None and meal.student_price != 0:
-        return ' - {} {:.2f}€'.format(meal.title, meal.student_price)
+        return ' - [{}]({}) {:.2f}€'.format(meal.title, meal.detail_url, meal.student_price)
     else:
-        return ' - {}'.format(meal.title)
+        return ' - [{}]({})'.format(meal.title, meal.detail_url)
 
 
 def _common_canteen_names(name: str) -> str:
