@@ -3,6 +3,9 @@ from telegram.ext import Updater
 from htwdresden_bot import *
 
 
+GRADE_NOTIFICATION_INTERVAL = 1_800
+
+
 def on_startup(bot, _):
     maintainer_chat_id = os.getenv('MAINTAINER_CHAT_ID')
     if maintainer_chat_id is not None:
@@ -24,6 +27,6 @@ dispatcher.add_handler(free_rooms_handler)
 dispatcher.add_handler(meals_handler)
 dispatcher.add_handler(meal_search_handler)
 
-updater.job_queue.run_repeating(notify_grades, interval=30*60, first=0)
+updater.job_queue.run_repeating(notify_grades, interval=GRADE_NOTIFICATION_INTERVAL, first=0)
 
 updater.start_polling()
