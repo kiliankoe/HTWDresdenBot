@@ -93,6 +93,12 @@ def notify_grades(bot, job):
 
         grade_diff = len(current_grades) - grade_count
         db.update_grade_count_for_user(login.s_number, len(current_grades))
-        bot.send_message(chat_id=chat_id, text='{} neue Noten verfügbar! /noten?'.format(grade_diff))
+
+        if grade_diff < 0:
+            bot.send_message(chat_id=chat_id, text='{} Noten wurden entfernt! /noten?'.format(-grade_diff))
+        elif grade_diff == 1:
+            bot.send_message(chat_id=chat_id, text='Eine neue Note ist verfügbar! /noten?'.format(grade_diff))
+        else:
+            bot.send_message(chat_id=chat_id, text='{} neue Noten sind verfügbar! /noten?'.format(grade_diff))
 
         time.sleep(2)  # just in case, don't want to stress the endpoint too much
