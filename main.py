@@ -3,7 +3,7 @@ from telegram.ext import Updater
 from htwdresden_bot import *
 
 
-GRADE_NOTIFICATION_INTERVAL = 1_800
+GRADE_NOTIFICATION_INTERVAL = 3_600
 
 
 def on_startup(bot, _):
