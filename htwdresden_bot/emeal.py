@@ -9,7 +9,10 @@ from htwdresden import Meal, Canteen
 
 DEFAULT_CANTEEN_NAME = 'Mensa Reichenbachstraße'
 DEFAULT_CANTEEN_ID = 1
-DEFAULT_DATE = datetime.now()
+
+
+def _default_date():
+    return datetime.now()
 
 
 def _meals_cmd(bot, update, args):
@@ -57,7 +60,7 @@ def _meals_cmd(bot, update, args):
             canteen_name = canteen_name[:-1]
             date = datetime.now() + timedelta(days=2)
         else:
-            date = DEFAULT_DATE
+            date = _default_date()
 
         canteen_name = ' '.join(canteen_name)
 
@@ -77,7 +80,7 @@ def _meals_cmd(bot, update, args):
             return
 
     if date is None:
-        date = DEFAULT_DATE
+        date = _default_date()
 
     meals = Meal.fetch(canteen_id, date.strftime('%Y-%m-%d'))
 
