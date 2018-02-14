@@ -36,7 +36,7 @@ def _grades_cmd(bot, update, args):
 
     try:
         grades = _fetch_grades(login)
-        grades_msg = '\n'.join([str(g) for g in grades])
+        grades_msg = _format_grades(grades)
     except HTWBaseException:
         grades_msg = None
 
@@ -60,8 +60,39 @@ grades_handler = CommandHandler('noten', _grades_cmd, pass_args=True)
 def _fetch_grades(login: RZLogin) -> [Grade] or None:
     course = Course.fetch(login)[0]  # can this contain multiple courses?
     grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)
-    grades = sorted(grades, key=lambda grade: grade.exam_date if grade.exam_date is not None else '0000')
+    grades = sorted(grades, key=lambda grade: grade.semester)
     return grades
+
+
+def _format_grades(grades: [Grade]) -> str:
+    if len(grades) == 0:
+        return ''
+
+    output = []
+    current_semester = grades[0].semester
+    output.append(_format_semester(current_semester))
+
+    for grade in grades:
+        if grade.semester == current_semester:
+            output.append(str(grade))
+        else:
+            current_semester = grade.semester
+            output.append('\n')
+            output.append(_format_semester(current_semester))
+            output.append(str(grade))
+
+    return '\n'.join(output)
+
+
+def _format_semester(semester: int) -> str:
+    semester = str(semester)
+    ident = semester[-1]
+    year = semester[:4]
+
+    if ident == '1':
+        return 'Sommersemester {}'.format(year)
+    else:
+        return 'Wintersemester {}'.format(year)
 
 
 def notify_grades(bot, _):
