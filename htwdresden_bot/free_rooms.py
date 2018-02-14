@@ -2,7 +2,7 @@ from datetime import datetime
 
 from telegram.ext import CommandHandler
 from telegram.chataction import ChatAction
-from htwdresden import FreeRooms, Week, Day, Building, HTWRequestError
+from htwdresden import FreeRooms, Week, Day, Building, HTWBaseException
 
 
 def _free_rooms_cmd(bot, update, args):
@@ -50,7 +50,7 @@ def _free_rooms_cmd(bot, update, args):
         rooms = FreeRooms.fetch(Week.current(), Day.current(), time, time, building)
         update.message.reply_text('Laut Belegungsplan sind folgende Räume im {} Gebäude {} frei:\n\n{}'
                                   .format(building, time_description, ', '.join(rooms)))
-    except HTWRequestError:
+    except HTWBaseException:
         update.message.reply_text('Huch, mit der Anfrage gab es leider einen Fehler. 😵\nAchte bitte auf das korrekte '
                                   'Format der Uhrzeit, bspws. 13:00 oder 9:20.')
 

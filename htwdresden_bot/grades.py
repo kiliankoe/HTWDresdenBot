@@ -4,6 +4,7 @@ from telegram.ext import CommandHandler
 from telegram.parsemode import ParseMode
 from telegram.chataction import ChatAction
 from htwdresden import RZLogin, Course, Grade
+from htwdresden.exceptions import *
 from htwdresden_bot import db
 
 
@@ -33,11 +34,10 @@ def _grades_cmd(bot, update, args):
 
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
 
-    grades = _fetch_grades(login)
-
-    if grades is not None:
+    try:
+        grades = _fetch_grades(login)
         grades_msg = '\n'.join([str(g) for g in grades])
-    else:
+    except HTWBaseException:
         grades_msg = None
 
     if grades_msg == '':
@@ -58,17 +58,13 @@ grades_handler = CommandHandler('noten', _grades_cmd, pass_args=True)
 
 
 def _fetch_grades(login: RZLogin) -> [Grade] or None:
-    try:
-        course = Course.fetch(login)[0]  # can this contain multiple courses?
-        grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)
-        grades = sorted(grades, key=lambda grade: grade.exam_date if grade.exam_date is not None else '0000')
-    except Exception as e:
-        print(f'Failed fetching grades for {login} with {e}', file=sys.stderr)
-        return None
+    course = Course.fetch(login)[0]  # can this contain multiple courses?
+    grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)
+    grades = sorted(grades, key=lambda grade: grade.exam_date if grade.exam_date is not None else '0000')
     return grades
 
 
-def notify_grades(bot, job):
+def notify_grades(bot, _):
     """Fetch grades of all logged in users and send them notifications if new grades are available."""
     all_users = db.fetch_all_logins()
     for user in all_users:
@@ -76,10 +72,21 @@ def notify_grades(bot, job):
         grade_count = user[1]
         login = user[2]
 
-        current_grades = _fetch_grades(login)
-        if current_grades is None:
-            # grades API seems to be offline a lot, stop the entire update in that case
-            break
+        try:
+            current_grades = _fetch_grades(login)
+        except HTWAuthenticationException:
+            db.remove_login(chat_id)
+            bot.send_message(chat_id=chat_id,
+                             text='Der Server der HTW meint dein Login sei nicht (mehr) valide. Ich habe diesen aus '
+                                  'meiner Datenbank entfernt und werde *nicht* mehr für dich nach neuen Noten schauen. '
+                                  'Solltest du nur dein Passwort geändert haben, so sende mir bitte erneut den '
+                                  '/login Befehl mit deinen Logindetails.',
+                             parse_mode=ParseMode.MARKDOWN)
+            continue
+        except HTWServerException as e:
+            # stop the entire update if the server is down
+            print('Grades API error: {}'.format(e), file=sys.stderr)
+            return
 
         if grade_count == -1:
             # grades have never been fetched for this user, not sending a notification at this time

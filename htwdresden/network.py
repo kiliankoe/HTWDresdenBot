@@ -10,12 +10,12 @@ class Network:
         if req.status_code == 401:
             raise HTWAuthenticationException
         elif req.status_code == 400:
-            raise HTWRequestError
+            raise HTWRequestException
         elif int(req.status_code / 100) == 5:
-            raise HTWServerError
+            raise HTWServerException
         elif req.status_code != 200:
             print(req.status_code)
             print(req.text)
-            return None
+            return HTWBaseException
 
         return json.loads(req.text)

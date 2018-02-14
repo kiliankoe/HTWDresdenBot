@@ -1,10 +1,14 @@
-class HTWAuthenticationException(Exception):
+class HTWBaseException(Exception):
     pass
 
 
-class HTWRequestError(Exception):
+class HTWAuthenticationException(HTWBaseException):
     pass
 
 
-class HTWServerError(Exception):
+class HTWRequestException(HTWBaseException):
+    pass
+
+
+class HTWServerException(HTWBaseException):
     pass
