@@ -1,4 +1,5 @@
 import sys
+import time
 from telegram.ext import CommandHandler
 from telegram.parsemode import ParseMode
 from telegram.chataction import ChatAction
@@ -14,7 +15,8 @@ def _grades_cmd(bot, update, args):
                                   'dich via /logout wieder bei mir abmeldest) überlassen oder mit '
                                   '\'/noten s12345 dein_password\' nur einmal übergeben, wobei dieser dann nicht '
                                   'gespeichert wird. Solltest du deinen Login hinterlegen kannst du deine Noten in '
-                                  'Zukunft direkt via /noten abrufen.')
+                                  'Zukunft direkt via /noten abrufen und ich rufe deine Noten regelmäßig automatisch '
+                                  'für dich ab und benachrichtige dich bei Änderungen.')
         return
 
     if len(args) == 2:
@@ -32,7 +34,11 @@ def _grades_cmd(bot, update, args):
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
 
     grades = _fetch_grades(login)
-    grades_msg = '\n'.join([str(g) for g in grades])
+
+    if grades is not None:
+        grades_msg = '\n'.join([str(g) for g in grades])
+    else:
+        grades_msg = None
 
     if grades_msg == '':
         update.message.reply_text('Konnte keine Noten finden. 🤔')
@@ -51,12 +57,42 @@ def _grades_cmd(bot, update, args):
 grades_handler = CommandHandler('noten', _grades_cmd, pass_args=True)
 
 
-def _fetch_grades(login: RZLogin) -> [Grade]:
+def _fetch_grades(login: RZLogin) -> [Grade] or None:
     try:
         course = Course.fetch(login)[0]  # can this contain multiple courses?
         grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)
         grades = sorted(grades, key=lambda grade: grade.exam_date if grade.exam_date is not None else '0000')
     except Exception as e:
         print(f'Failed fetching grades for {login} with {e}', file=sys.stderr)
-        return []
+        return None
     return grades
+
+
+def notify_grades(bot, job):
+    """Fetch grades of all logged in users and send them notifications if new grades are available."""
+    all_users = db.fetch_all_logins()
+    for user in all_users:
+        chat_id = user[0]
+        grade_count = user[1]
+        login = user[2]
+
+        current_grades = _fetch_grades(login)
+        if current_grades is None:
+            # grades API seems to be offline a lot, stop the entire update in that case
+            break
+
+        if grade_count == -1:
+            # grades have never been fetched for this user, not sending a notification at this time
+            db.update_grade_count_for_user(login.s_number, len(current_grades))
+            time.sleep(2)
+            continue
+
+        if len(current_grades) == grade_count:
+            time.sleep(2)
+            continue
+
+        grade_diff = len(current_grades) - grade_count
+        db.update_grade_count_for_user(login.s_number, len(current_grades))
+        bot.send_message(chat_id=chat_id, text='{} neue Noten verfügbar! /noten?'.format(grade_diff))
+
+        time.sleep(2)  # just in case, don't want to stress the endpoint too much
