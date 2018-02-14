@@ -27,7 +27,8 @@ def persist_login(chat_id: str, login: RZLogin) -> bool:
     with sqlite3.connect(DB_NAME) as conn:
         c = conn.cursor()
         try:
-            c.execute('''INSERT into `logins` values (?,?,?,?);''', (chat_id, login.s_number, login.password, -1))
+            c.execute('''INSERT into `logins` (chat_id, login, password, grade_count) values (?,?,?,?);''',
+                      (chat_id, login.s_number, login.password, -1))
             conn.commit()
         except sqlite3.IntegrityError as e:
             return False
