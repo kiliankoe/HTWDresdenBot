@@ -5,8 +5,6 @@ WORKDIR /htwbot
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY main.py .
-COPY htwdresden .
-COPY htwdresden_bot .
+COPY . .
 
 CMD ["python", "main.py"]
