@@ -69,3 +69,11 @@ def update_grade_count_for_user(s_number: str, new_count: int) -> bool:
         c.execute('''UPDATE `logins` SET grade_count = ? WHERE login = ?;''', (new_count, s_number))
         conn.commit()
         return c.rowcount > 0
+
+
+def update_chat_id_for_user(old_chat_id: str, new_chat_id: str) -> bool:
+    with sqlite3.connect(DB_NAME) as conn:
+        c = conn.cursor()
+        c.execute('''UPDATE `logins` SET chat_id = ? WHERE chat_id = ?;''', (new_chat_id, old_chat_id))
+        conn.commit()
+        return c.rowcount > 0
