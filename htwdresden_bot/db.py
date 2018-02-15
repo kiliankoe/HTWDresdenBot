@@ -1,5 +1,6 @@
 import sys
 import sqlite3
+import logging
 from htwdresden import RZLogin
 
 DB_NAME = 'htw_bot.db'
@@ -15,15 +16,16 @@ def setup():
                 `password`	  TEXT NOT NULL,
                 `grade_count` INTEGER NOT NULL
             );''')
+            logging.info('db doesn\'t exist, creating.')
         except sqlite3.OperationalError:
-            # db with table logins already exists
             pass
         except Exception as e:
-            print(e)
+            logging.error(f'unexpected db error: {e}')
             sys.exit(1)
 
 
 def persist_login(chat_id: str, login: RZLogin) -> bool:
+    logging.info('persisting new login')
     with sqlite3.connect(DB_NAME) as conn:
         c = conn.cursor()
         try:
@@ -36,6 +38,7 @@ def persist_login(chat_id: str, login: RZLogin) -> bool:
 
 
 def remove_login(chat_id: str) -> bool:
+    logging.info('removing login')
     with sqlite3.connect(DB_NAME) as conn:
         c = conn.cursor()
         c.execute('''DELETE from `logins` WHERE chat_id = ?;''', (chat_id,))

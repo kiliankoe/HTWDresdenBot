@@ -1,3 +1,5 @@
+import logging
+
 from telegram.ext import CommandHandler
 from telegram.parsemode import ParseMode
 from htwdresden import RZLogin, Course, HTWAuthenticationException
@@ -25,6 +27,7 @@ def _login_cmd(_, update, args):
     except HTWAuthenticationException:
         update.message.reply_text('Dieser Login scheint nicht zu funktionieren. Sicher, dass die Daten so korrekt '
                                   'sind?')
+        logging.info('failed login auth, not persisting login details')
         return
     except:
         pass
@@ -36,6 +39,7 @@ def _login_cmd(_, update, args):
         update.message.reply_text('Dein Login konnte leider nicht gespeichert werden. Kenne ich ihn vielleicht schon?'
                                   '\n\nWenn du dein Passwort ändern willst, dann sende bitte /logout um den alten '
                                   'Login zu löschen. Sorry für die Umstände.')
+        logging.warning('failed to persist login')
 
 
 login_handler = CommandHandler('login', _login_cmd, pass_args=True)
@@ -52,6 +56,7 @@ def _logout_cmd(_, update, args):
         update.message.reply_text('Dein gespeicherter Login wurde erfolgreich gelöscht ✔')
     else:
         update.message.reply_text('Dein Login konnte nicht gelöscht werden. Kannte ich ihn überhaupt? 🤔')
+        logging.warning('failed to remove login')
 
 
 logout_handler = CommandHandler('logout', _logout_cmd, pass_args=True)

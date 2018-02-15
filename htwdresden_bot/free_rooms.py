@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 from telegram.ext import CommandHandler
 from telegram.chataction import ChatAction
@@ -37,6 +38,7 @@ def _free_rooms_cmd(bot, update, args):
 
         time_description = 'heute um {} Uhr'.format(time)
     else:
+        logging.warning(f'unknown room args: {args}')
         update.message.reply_text('Das habe ich leider nicht verstanden. Tippe \'/raum hilfe\' wenn du mehr zu diesem '
                                   'Befehl erfahren willst.')
         return
@@ -51,6 +53,7 @@ def _free_rooms_cmd(bot, update, args):
         update.message.reply_text('Laut Belegungsplan sind folgende Räume im {} Gebäude {} frei:\n\n{}'
                                   .format(building, time_description, ', '.join(rooms)))
     except HTWBaseException:
+        logging.warning(f'room arg error: {args}')
         update.message.reply_text('Huch, mit der Anfrage gab es leider einen Fehler. 😵\nAchte bitte auf das korrekte '
                                   'Format der Uhrzeit, bspws. 13:00 oder 9:20.')
 

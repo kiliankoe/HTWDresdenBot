@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import logging
 
 from telegram.ext import CommandHandler
 from telegram.parsemode import ParseMode
@@ -76,6 +77,7 @@ def _meals_cmd(bot, update, args):
                 canteen_name = c.name
                 canteen_id = c.id
         if canteen_id == 0:
+            logging.warning(f'unknown canteen \'{canteen_name}\'')
             update.message.reply_text('Ich konnte leider keine Mensa mit dem Namen {} finden. 😢'.format(canteen_name))
             return
 

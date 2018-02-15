@@ -31,7 +31,7 @@ dispatcher.add_handler(free_rooms_handler)
 dispatcher.add_handler(meals_handler)
 dispatcher.add_handler(meal_search_handler)
 
-logging.info('Polling for new messages...')
+logging.info('polling for new messages...')
 updater.start_polling()
 
 updater.job_queue.run_repeating(notify_grades, interval=GRADE_NOTIFICATION_INTERVAL, first=0)

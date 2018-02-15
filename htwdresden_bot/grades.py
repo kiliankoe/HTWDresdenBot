@@ -1,5 +1,7 @@
 import sys
 import time
+import logging
+
 from telegram.ext import CommandHandler
 from telegram.parsemode import ParseMode
 from telegram.chataction import ChatAction
@@ -58,7 +60,7 @@ grades_handler = CommandHandler('noten', _grades_cmd, pass_args=True)
 
 
 def _fetch_grades(login: RZLogin) -> [Grade] or None:
-    course = Course.fetch(login)[0]  # can this contain multiple courses?
+    course = Course.fetch(login)[0]  # TODO: support all courses, not just the first one
     grades = Grade.fetch(login, course.degree_nr, course.course_nr, course.reg_version)
     grades = sorted(grades, key=lambda grade: grade.semester)
     return grades
@@ -99,6 +101,7 @@ def notify_grades(bot, _):
     """Fetch grades of all logged in users and send them notifications if new grades are available."""
     all_users = db.fetch_all_logins()
     for user in all_users:
+        logging.debug(f'updating grades for {user[0]}')
         chat_id = user[0]
         grade_count = user[1]
         login = user[2]
@@ -116,7 +119,7 @@ def notify_grades(bot, _):
             continue
         except HTWServerException as e:
             # stop the entire update if the server is down
-            print('Grades API error: {}'.format(e), file=sys.stderr)
+            logging.error(f'grades api error {e}')
             return
 
         if grade_count == -1:
