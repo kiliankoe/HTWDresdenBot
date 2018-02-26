@@ -39,6 +39,8 @@ def _grades_cmd(bot, update, args):
     try:
         grades = _fetch_grades(login)
         grades_msg = _format_grades(grades)
+        average = calculate_grade_average(grades)
+        average_msg = 'Notendurchschnitt {0:.2f}'.format(average)
     except HTWBaseException:
         grades_msg = None
 
@@ -51,8 +53,8 @@ def _grades_cmd(bot, update, args):
                                   'zumindest das. 😅',
                                   parse_mode=ParseMode.MARKDOWN)
     else:
-        update.message.reply_text('```\n{}\n```\n\nAlle Angaben ohne Gewähr. Eine detaillierte Auflistung findest du '
-                                  '[hier](https://wwwqis.htw-dresden.de).'.format(grades_msg),
+        update.message.reply_text('```\n{}\n\n{}\n```\n\nAlle Angaben ohne Gewähr. Eine detaillierte Auflistung findest du '
+                                  '[hier](https://wwwqis.htw-dresden.de).'.format(grades_msg, average_msg),
                                   parse_mode=ParseMode.MARKDOWN)
 
 
@@ -85,6 +87,21 @@ def _format_grades(grades: [Grade]) -> str:
 
     return '\n'.join(output)
 
+def calculate_grade_average(grades: [Grade]) -> float:
+    if len(grades) == 0:
+        return 0.0
+
+    sumWeightedGrades = 0.0
+    sumCredits = 0.0
+
+    for grade in grades:
+        sumWeightedGrades += grade.ects_credits * grade.grade
+        sumCredits += grade.ects_credits
+
+    if sumCredits == 0.0:
+        return 0.0
+
+    return sumWeightedGrades / sumCredits
 
 def _format_semester(semester: int) -> str:
     semester = str(semester)
