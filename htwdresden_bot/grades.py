@@ -95,8 +95,11 @@ def calculate_grade_average(grades: [Grade]) -> float:
     sumCredits = 0.0
 
     for grade in grades:
-        sumWeightedGrades += grade.ects_credits * grade.grade
-        sumCredits += grade.ects_credits
+        if grade.grade is None or grade.ects_credits is None:
+            continue
+        else:
+            sumWeightedGrades += grade.ects_credits * grade.grade
+            sumCredits += grade.ects_credits
 
     if sumCredits == 0.0:
         return 0.0
