@@ -11,7 +11,6 @@ from htwdresden_bot import db
 
 
 def _grades_cmd(bot, update, args):
-
     if len(args) == 1 and args[0].lower() == 'hilfe':
         update.message.reply_text('Mit /noten kannst du deine Noten abrufen. Hierfür ist natürlich dein RZLogin '
                                   'erforderlich. Den kannst du mir entweder via /login permanent (zumindest bis du '
@@ -53,9 +52,10 @@ def _grades_cmd(bot, update, args):
                                   'zumindest das. 😅',
                                   parse_mode=ParseMode.MARKDOWN)
     else:
-        update.message.reply_text('```\n{}\n\n{}\n```\n\nAlle Angaben ohne Gewähr. Eine detaillierte Auflistung findest du '
-                                  '[hier](https://wwwqis.htw-dresden.de).'.format(grades_msg, average_msg),
-                                  parse_mode=ParseMode.MARKDOWN)
+        update.message.reply_text(
+            '```\n{}\n\n{}\n```\n\nAlle Angaben ohne Gewähr. Eine detaillierte Auflistung findest du '
+            '[hier](https://wwwqis.htw-dresden.de).'.format(grades_msg, average_msg),
+            parse_mode=ParseMode.MARKDOWN)
 
 
 grades_handler = CommandHandler('noten', _grades_cmd, pass_args=True)
@@ -87,24 +87,26 @@ def _format_grades(grades: [Grade]) -> str:
 
     return '\n'.join(output)
 
+
 def calculate_grade_average(grades: [Grade]) -> float:
     if len(grades) == 0:
         return 0.0
 
-    sumWeightedGrades = 0.0
-    sumCredits = 0.0
+    sum_weighted_grades = 0.0
+    sum_credits = 0.0
 
     for grade in grades:
         if grade.grade is None or grade.ects_credits is None:
             continue
         else:
-            sumWeightedGrades += grade.ects_credits * grade.grade
-            sumCredits += grade.ects_credits
+            sum_weighted_grades += grade.ects_credits * grade.grade
+            sum_credits += grade.ects_credits
 
-    if sumCredits == 0.0:
+    if sum_credits == 0.0:
         return 0.0
 
-    return sumWeightedGrades / sumCredits
+    return sum_weighted_grades / sum_credits
+
 
 def _format_semester(semester: int) -> str:
     semester = str(semester)
