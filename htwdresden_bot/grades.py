@@ -42,6 +42,7 @@ def _grades_cmd(bot, update, args):
         average_msg = 'Notendurchschnitt {0:.2f}'.format(average)
     except HTWBaseException:
         grades_msg = None
+        average_msg = 'Notendurschnitt unbekannt'
 
     if grades_msg == '':
         update.message.reply_text('Konnte keine Noten finden. 🤔')
