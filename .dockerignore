@@ -3,3 +3,4 @@ venv
 htw_bot.db
 run-htwbot.sh
 .git
+deploy.sh
