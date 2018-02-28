@@ -105,7 +105,7 @@ def _calculate_grade_average(grades: [Grade]) -> float:
     if sum_credits == 0.0:
         return 0.0
 
-    return sum_weighted_grades / sum_credits
+    return (sum_weighted_grades / 100) / sum_credits
 
 
 def _format_semester(semester: int) -> str:
